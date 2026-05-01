@@ -3,8 +3,16 @@ node_modules/
 dist/
 out/
 *.zip
+App.tsx
+app.json
+blackbird-standalone.jsx
+convex/
+src/
+tsconfig.json
+web-preview.html
 .env.local
 .env
+.env.example
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

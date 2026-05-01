@@ -1,13 +1,13 @@
 {
-  "name": "MiguelGym",
-  "short_name": "MiguelGym",
-  "description": "A premium dark 4-day gym workout tracker focused on muscle and arm growth.",
+  "name": "Blackbird Logistics",
+  "short_name": "Blackbird",
+  "description": "Blackbird Logistics operations preview.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#080807",
-  "theme_color": "#080807",
+  "background_color": "#f9fafb",
+  "theme_color": "#ea580c",
   "icons": [
     {
       "src": "/app-icon.svg",

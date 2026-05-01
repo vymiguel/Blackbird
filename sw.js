@@ -1,7 +1,7 @@
-const CACHE_NAME = "miguelgym-pwa-v1";
+const CACHE_NAME = "blackbird-pwa-v1";
 const APP_SHELL = [
   "/",
-  "/web-preview.html",
+  "/blackbird-module.jsx",
   "/manifest.webmanifest",
   "/app-icon.svg"
 ];
@@ -27,7 +27,7 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
-      return fetch(event.request).catch(() => caches.match("/web-preview.html"));
+      return fetch(event.request).catch(() => caches.match("/"));
     })
   );
 });

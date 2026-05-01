@@ -1,33 +1,10 @@
 {
-  "name": "miguelgym",
+  "name": "blackbird-logistics",
   "version": "1.0.0",
   "private": true,
-  "main": "expo/AppEntry",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
+    "build": "node scripts/build-pwa.mjs",
     "build:pwa": "node scripts/build-pwa.mjs",
-    "convex:dev": "convex dev",
-    "typecheck": "tsc --noEmit",
-    "video:studio": "remotion studio src/remotion/index.ts",
-    "video:render": "remotion render src/remotion/index.ts GymAppLaunch out/miguelgym-launch.mp4",
-    "video:still": "remotion still src/remotion/index.ts GymAppLaunch out/miguelgym-launch-frame.png --frame=360"
-  },
-  "dependencies": {
-    "@expo/vector-icons": "^14.0.4",
-    "convex": "^1.17.4",
-    "expo": "~54.0.0",
-    "expo-status-bar": "~3.0.0",
-    "react": "19.1.0",
-    "react-native": "0.81.0",
-    "react-native-safe-area-context": "~5.6.0"
-  },
-  "devDependencies": {
-    "@remotion/cli": "^4.0.0",
-    "@types/react": "~19.1.10",
-    "remotion": "^4.0.0",
-    "typescript": "^5.3.3"
+    "start": "node preview-server.mjs"
   }
 }
