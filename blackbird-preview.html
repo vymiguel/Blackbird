@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blackbird Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script>
+      window.storage = {
+        async get(key) {
+          const value = localStorage.getItem(key);
+          return value == null ? null : { value };
+        },
+        async set(key, value) {
+          localStorage.setItem(key, value);
+          return { value };
+        },
+        async remove(key) {
+          localStorage.removeItem(key);
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel" data-type="module" src="/blackbird-module.jsx"></script>
+  </body>
+</html>

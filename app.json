@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "MiguelGym",
+    "slug": "miguelgym",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "miguelgym",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#080908"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#080908"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": []
+  }
+}

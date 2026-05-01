@@ -1,0 +1,19 @@
+{
+  "name": "MiguelGym",
+  "short_name": "MiguelGym",
+  "description": "A premium dark 4-day gym workout tracker focused on muscle and arm growth.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080807",
+  "theme_color": "#080807",
+  "icons": [
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

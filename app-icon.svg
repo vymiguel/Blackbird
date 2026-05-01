@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#080807"/>
+  <rect x="42" y="42" width="428" height="428" rx="72" fill="#121210" stroke="#d9a441" stroke-width="10"/>
+  <circle cx="256" cy="204" r="86" fill="#d9a441"/>
+  <path d="M128 332h256v36H128zM156 294h200v32H156zM188 168h136v72H188z" fill="#080807"/>
+  <text x="256" y="405" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="900" fill="#f1cf82">MG</text>
+</svg>

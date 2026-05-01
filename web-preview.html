@@ -1,0 +1,1333 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#080807" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MiguelGym" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/app-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/app-icon.svg" />
+    <title>MiguelGym Workout Preview</title>
+    <style>
+      :root {
+        --bg: #080807;
+        --panel: #121210;
+        --panel-2: #191814;
+        --line: #2c2a24;
+        --text: #f4efe1;
+        --muted: #9d988b;
+        --gold: #d9a441;
+        --gold-2: #f1cf82;
+        --red: #b74332;
+        --green: #6ea86f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 22% 8%, rgba(217, 164, 65, 0.16), transparent 28rem),
+          linear-gradient(145deg, #050505 0%, #10100e 48%, #070707 100%);
+        color: var(--text);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        letter-spacing: 0;
+      }
+
+      button {
+        border: 0;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+
+      .page {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .phone {
+        width: min(430px, 100%);
+        min-height: min(900px, calc(100vh - 48px));
+        overflow: hidden;
+        border: 1px solid rgba(241, 207, 130, 0.22);
+        border-radius: 28px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 170px),
+          var(--bg);
+        box-shadow: 0 26px 80px rgba(0, 0, 0, 0.52);
+      }
+
+      .app {
+        height: min(900px, calc(100vh - 48px));
+        overflow-y: auto;
+        padding: 22px 18px 28px;
+        scrollbar-width: none;
+      }
+
+      .app::-webkit-scrollbar {
+        display: none;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .mark {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: linear-gradient(145deg, var(--gold-2), var(--gold));
+        color: #11100d;
+        font-weight: 900;
+      }
+
+      .eyebrow {
+        color: var(--gold-2);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 28px;
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        font-size: 18px;
+        letter-spacing: 0;
+      }
+
+      .icon-button {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #11110f;
+        color: var(--gold-2);
+        font-weight: 900;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(217, 164, 65, 0.24);
+        border-radius: 8px;
+        padding: 20px;
+        background:
+          linear-gradient(135deg, rgba(217, 164, 65, 0.22), transparent 46%),
+          linear-gradient(180deg, #1c1a15, #11100e);
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: auto -44px -70px auto;
+        width: 180px;
+        height: 180px;
+        border: 1px solid rgba(241, 207, 130, 0.16);
+        border-radius: 50%;
+      }
+
+      .hero-row {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .hero-title {
+        margin-top: 8px;
+        max-width: 230px;
+        font-size: 32px;
+        line-height: 0.96;
+        font-weight: 900;
+      }
+
+      .hero-stat {
+        width: 82px;
+        height: 82px;
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.32);
+        border: 1px solid rgba(241, 207, 130, 0.28);
+        text-align: center;
+      }
+
+      .hero-stat strong {
+        display: block;
+        font-size: 24px;
+      }
+
+      .hero-stat span {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 24px 0 12px;
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: linear-gradient(180deg, var(--panel-2), var(--panel));
+      }
+
+      .day-card {
+        width: 100%;
+        padding: 16px;
+        margin-bottom: 10px;
+        text-align: left;
+      }
+
+      .day-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .day-num {
+        color: var(--gold);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .focus {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 12px;
+      }
+
+      .pill {
+        padding: 6px 8px;
+        border-radius: 999px;
+        background: rgba(217, 164, 65, 0.1);
+        color: var(--gold-2);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .progress {
+        height: 7px;
+        overflow: hidden;
+        margin-top: 14px;
+        border-radius: 999px;
+        background: #292720;
+      }
+
+      .progress span {
+        display: block;
+        height: 100%;
+        width: 0;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--gold), var(--gold-2));
+        transition: width 180ms ease;
+      }
+
+      .chev {
+        color: var(--gold-2);
+        font-size: 22px;
+        line-height: 1;
+      }
+
+      .nav {
+        position: sticky;
+        bottom: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 22px;
+        padding-top: 10px;
+        background: linear-gradient(180deg, transparent, var(--bg) 20%);
+      }
+
+      .nav button,
+      .primary {
+        min-height: 46px;
+        border-radius: 8px;
+        background: #171612;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-weight: 900;
+      }
+
+      .nav button.active,
+      .primary {
+        background: linear-gradient(145deg, var(--gold-2), var(--gold));
+        color: #12100b;
+        border-color: transparent;
+      }
+
+      .screen {
+        display: none;
+      }
+
+      .screen.active {
+        display: block;
+        animation: screenIn 180ms ease both;
+      }
+
+      @keyframes screenIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .exercise {
+        padding: 14px;
+        margin-bottom: 10px;
+        transition:
+          border-color 180ms ease,
+          transform 180ms ease,
+          background 180ms ease;
+      }
+
+      .exercise.done {
+        border-color: rgba(241, 207, 130, 0.48);
+        background: linear-gradient(180deg, #211f19, var(--panel));
+      }
+
+      .exercise-main {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: 12px;
+      }
+
+      .check {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: #0f0f0d;
+        color: transparent;
+        font-weight: 900;
+      }
+
+      .check.done {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: #11100d;
+      }
+
+      .meta {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin: 12px 0;
+      }
+
+      .meta div {
+        padding: 10px 8px;
+        border-radius: 8px;
+        background: #0f0f0d;
+        border: 1px solid #24221d;
+      }
+
+      .meta span {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .meta strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 13px;
+      }
+
+      .note {
+        color: #c9c1ad;
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .timer {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 12px;
+        align-items: center;
+        margin: 16px 0;
+        padding: 16px;
+        transition:
+          border-color 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      .timer.active {
+        border-color: rgba(241, 207, 130, 0.46);
+        box-shadow: 0 0 30px rgba(217, 164, 65, 0.12);
+      }
+
+      .timer-face {
+        width: 100px;
+        height: 100px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: conic-gradient(var(--gold) var(--timer-progress), #292720 0);
+      }
+
+      .timer-face span {
+        width: 82px;
+        height: 82px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--panel);
+        font-size: 24px;
+        font-weight: 900;
+      }
+
+      .timer-actions {
+        display: grid;
+        gap: 8px;
+      }
+
+      .timer-actions button,
+      .rest-button {
+        min-height: 40px;
+        border-radius: 8px;
+        background: #0f0f0d;
+        border: 1px solid var(--line);
+        color: var(--gold-2);
+        font-weight: 900;
+      }
+
+      .rest-button {
+        width: 100%;
+        margin-top: 12px;
+      }
+
+      .exercise-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .detail-button {
+        min-height: 40px;
+        border-radius: 8px;
+        background: rgba(217, 164, 65, 0.1);
+        border: 1px solid var(--line);
+        color: var(--gold-2);
+        font-weight: 900;
+      }
+
+      .video-card {
+        display: grid;
+        grid-template-columns: 46px 1fr;
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        margin-bottom: 12px;
+        border-color: rgba(241, 207, 130, 0.28);
+      }
+
+      .play-mark {
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: linear-gradient(145deg, var(--gold-2), var(--gold));
+        color: #11100d;
+        font-weight: 900;
+      }
+
+      .video-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        margin-top: 8px;
+        padding: 0 12px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        color: var(--gold-2);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .finish-button {
+        width: 100%;
+        min-height: 48px;
+        margin: 14px 0 4px;
+        border-radius: 8px;
+        background: linear-gradient(145deg, var(--gold-2), var(--gold));
+        color: #11100d;
+        font-weight: 900;
+      }
+
+      .weekly-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 16px 0;
+      }
+
+      .metric {
+        padding: 16px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 28px;
+      }
+
+      .metric span {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .week-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px;
+        margin-bottom: 10px;
+      }
+
+      .done-tag {
+        padding: 7px 9px;
+        border-radius: 999px;
+        background: rgba(110, 168, 111, 0.14);
+        color: #98d194;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .open-tag {
+        padding: 7px 9px;
+        border-radius: 999px;
+        background: rgba(183, 67, 50, 0.14);
+        color: #e28f7f;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        background: rgba(0, 0, 0, 0.72);
+      }
+
+      .modal.open {
+        display: flex;
+      }
+
+      .modal-panel {
+        width: min(430px, 100%);
+        max-height: calc(100vh - 36px);
+        overflow-y: auto;
+        padding: 16px;
+      }
+
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 12px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+
+      .field label {
+        color: var(--gold-2);
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .field input,
+      .field textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #0f0f0d;
+        color: var(--text);
+        font: inherit;
+        padding: 11px;
+      }
+
+      .field textarea {
+        min-height: 76px;
+        resize: vertical;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .celebration {
+        text-align: center;
+        display: grid;
+        justify-items: center;
+        gap: 12px;
+      }
+
+      .celebration .mark {
+        width: 72px;
+        height: 72px;
+        font-size: 26px;
+      }
+
+      @media (max-width: 520px) {
+        .page {
+          padding: 0;
+          display: block;
+        }
+
+        .phone {
+          width: 100%;
+          min-height: 100vh;
+          border: 0;
+          border-radius: 0;
+        }
+
+        .app {
+          height: 100vh;
+        }
+
+        .weekly-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .exercise-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="phone" aria-label="MiguelGym workout app preview">
+        <div class="app">
+          <section class="screen active" id="home-screen">
+            <header class="topbar">
+              <div class="brand">
+                <div class="mark">P</div>
+                <div>
+                  <div class="eyebrow">MiguelGym</div>
+                  <h1>Build Week</h1>
+                </div>
+              </div>
+              <button class="icon-button" type="button" aria-label="Open weekly progress" onclick="showScreen('weekly')">W</button>
+            </header>
+
+            <div class="hero">
+              <div class="hero-row">
+                <div>
+                  <div class="eyebrow" id="week-label">Friday to Thursday</div>
+                  <p class="hero-title">Strength with an arms bias.</p>
+                </div>
+                <div class="hero-stat">
+                  <div>
+                    <strong id="hero-days">0/4</strong>
+                    <span>Days done</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Program</div>
+                <h2>4 workout days</h2>
+              </div>
+              <p class="muted" id="hero-exercises">0 exercises</p>
+            </div>
+
+            <div id="day-list"></div>
+
+            <nav class="nav" aria-label="Main navigation">
+              <button class="active" type="button" onclick="showScreen('home')">Home</button>
+              <button type="button" onclick="showScreen('weekly')">Weekly</button>
+            </nav>
+          </section>
+
+          <section class="screen" id="day-screen">
+            <header class="topbar">
+              <button class="icon-button" type="button" aria-label="Back home" onclick="showScreen('home')">&lt;</button>
+              <div style="text-align: right">
+                <div class="eyebrow" id="day-eyebrow">Day</div>
+                <h2 id="day-title">Workout</h2>
+              </div>
+            </header>
+
+            <div class="hero">
+              <div class="hero-row">
+                <div>
+                  <div class="eyebrow">Today</div>
+                  <p class="hero-title" id="day-hero-title">Workout</p>
+                </div>
+                <div class="hero-stat">
+                  <div>
+                    <strong id="day-percent">0%</strong>
+                    <span>Complete</span>
+                  </div>
+                </div>
+              </div>
+              <div class="progress"><span id="day-progress"></span></div>
+            </div>
+
+            <div class="timer card" style="--timer-progress: 0deg">
+              <div class="timer-face"><span id="timer-display">1:30</span></div>
+              <div class="timer-actions">
+                <button type="button" onclick="startTimer()">Start rest</button>
+                <button type="button" onclick="pauseTimer()">Pause</button>
+                <button type="button" onclick="resetTimer()">Reset</button>
+              </div>
+            </div>
+
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Exercises</div>
+                <h2 id="exercise-count">0 moves</h2>
+              </div>
+              <p class="muted">Check off each lift</p>
+            </div>
+
+            <div id="exercise-list"></div>
+          </section>
+
+          <section class="screen" id="weekly-screen">
+            <header class="topbar">
+              <button class="icon-button" type="button" aria-label="Back home" onclick="showScreen('home')">&lt;</button>
+              <div style="text-align: right">
+                <div class="eyebrow">Friday to Thursday</div>
+                <h2>Weekly Progress</h2>
+              </div>
+            </header>
+
+            <div class="hero">
+              <div class="hero-row">
+                <div>
+                  <div class="eyebrow" id="weekly-range">This week</div>
+                  <p class="hero-title">Keep the streak honest.</p>
+                </div>
+                <div class="hero-stat">
+                  <div>
+                    <strong id="weekly-percent">0%</strong>
+                    <span>Week</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="weekly-grid">
+              <div class="metric card">
+                <strong id="weekly-days">0/4</strong>
+                <span>Days complete</span>
+              </div>
+              <div class="metric card">
+                <strong id="weekly-exercises">0</strong>
+                <span>Exercises complete</span>
+              </div>
+              <div class="metric card">
+                <strong id="weekly-sets">0</strong>
+                <span>Sets logged</span>
+              </div>
+            </div>
+
+            <div class="section-head">
+              <div>
+                <div class="eyebrow">Checklist</div>
+                <h2>Workout days</h2>
+              </div>
+            </div>
+
+            <div id="weekly-list"></div>
+
+            <nav class="nav" aria-label="Main navigation">
+              <button type="button" onclick="showScreen('home')">Home</button>
+              <button class="active" type="button" onclick="showScreen('weekly')">Weekly</button>
+            </nav>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div class="modal" id="detail-modal" role="dialog" aria-modal="true" aria-label="Exercise detail editor">
+      <div class="modal-panel card">
+        <div class="modal-head">
+          <div>
+            <div class="eyebrow">Exercise detail</div>
+            <h2 id="detail-title">Exercise</h2>
+          </div>
+          <button class="icon-button" type="button" aria-label="Close exercise detail" onclick="closeDetail()">X</button>
+        </div>
+        <div class="video-card card">
+          <div class="play-mark">PLAY</div>
+          <div>
+            <div class="eyebrow">Form guide</div>
+            <p class="muted">Open a video search for the exact exercise.</p>
+            <button class="video-link" id="detail-video-button" type="button" onclick="openDetailVideo()">Watch form video</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="detail-technique">Technique notes</label>
+          <textarea id="detail-technique"></textarea>
+        </div>
+        <div class="field">
+          <label for="detail-personal">My note</label>
+          <textarea id="detail-personal" placeholder="How did this feel today?"></textarea>
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="detail-target">Target muscle</label>
+            <input id="detail-target" />
+          </div>
+          <div class="field">
+            <label for="detail-equipment">Equipment</label>
+            <input id="detail-equipment" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="detail-rest">Rest seconds</label>
+          <input id="detail-rest" inputmode="numeric" />
+        </div>
+        <div class="field">
+          <label for="detail-substitutes">Substitutes</label>
+          <input id="detail-substitutes" />
+        </div>
+        <div class="field">
+          <label for="detail-video">Video link</label>
+          <input id="detail-video" />
+        </div>
+        <button class="finish-button" type="button" onclick="saveDetail()">Save detail</button>
+      </div>
+    </div>
+
+    <div class="modal" id="finish-modal" role="dialog" aria-modal="true" aria-label="Workout logged">
+      <div class="modal-panel card celebration">
+        <div class="mark">M</div>
+        <h2>Workout logged</h2>
+        <p class="muted" id="finish-copy">Stored for this week.</p>
+        <button class="finish-button" type="button" onclick="closeFinish()">Done</button>
+      </div>
+    </div>
+
+    <script>
+      const plan = [
+        {
+          dayNumber: 1,
+          title: "Chest, Shoulders, Triceps",
+          subtitle: "Press heavy, finish sharp.",
+          focus: ["Chest", "Shoulders", "Triceps"],
+          exercises: [
+            ["Bench Press", "4", "6-8", 120, "Pin shoulder blades down and drive through the whole foot."],
+            ["Incline DB Press", "3", "8-10", 90, "Keep elbows tucked slightly below shoulder height."],
+            ["Shoulder Press", "3", "8-10", 90, "Brace hard and finish with biceps near ears."],
+            ["Cable Lateral Raise", "3", "12-15", 60, "Lead with elbows and pause at shoulder height."],
+            ["Rope Pressdown", "3", "10-12", 60, "Lock elbows to your sides and spread the rope at the bottom."],
+            ["Overhead Cable Extension", "3", "12-15", 60, "Let the long head stretch, then extend without flaring."],
+          ],
+        },
+        {
+          dayNumber: 2,
+          title: "Back + Biceps",
+          subtitle: "Wide back, bigger pull.",
+          focus: ["Lats", "Rows", "Biceps"],
+          exercises: [
+            ["Pull-Up or Lat Pulldown", "4", "8-10", 90, "Pull elbows to ribs and avoid shrugging."],
+            ["Barbell Row", "4", "6-8", 120, "Hinge firmly and pull toward lower ribs."],
+            ["Chest-Supported Row", "3", "10-12", 90, "Squeeze for one beat at the top."],
+            ["Face Pull", "3", "12-15", 60, "Pull to eye level with thumbs back."],
+            ["EZ-Bar Curl", "4", "8-10", 75, "Keep upper arms still and control the lower."],
+            ["Incline DB Curl", "3", "10-12", 60, "Let arms hang back for a full biceps stretch."],
+          ],
+        },
+        {
+          dayNumber: 3,
+          title: "Legs + Core",
+          subtitle: "Base strength and trunk work.",
+          focus: ["Quads", "Hamstrings", "Core"],
+          exercises: [
+            ["Back Squat", "4", "5-8", 150, "Brace before descent and keep knees tracking over toes."],
+            ["Romanian Deadlift", "4", "8-10", 120, "Push hips back until hamstrings load, then stand tall."],
+            ["Leg Press", "3", "10-12", 90, "Use a controlled depth without lifting hips."],
+            ["Seated Leg Curl", "3", "12-15", 75, "Curl hard and pause in the shortened position."],
+            ["Standing Calf Raise", "4", "10-15", 60, "Use a full stretch and hard top contraction."],
+            ["Cable Crunch", "3", "12-15", 60, "Curl ribs toward pelvis instead of pulling with arms."],
+          ],
+        },
+        {
+          dayNumber: 4,
+          title: "Arms Focus + Shoulders",
+          subtitle: "Extra arm volume with clean delts.",
+          focus: ["Biceps", "Triceps", "Delts"],
+          exercises: [
+            ["Close-Grip Bench", "4", "6-8", 120, "Keep wrists stacked and elbows close to your torso."],
+            ["Weighted Dip", "3", "8-10", 90, "Lean slightly forward and lock out with control."],
+            ["Preacher Curl", "4", "8-10", 75, "Do not bounce at the bottom."],
+            ["Cable Hammer Curl", "3", "10-12", 60, "Keep rope ends apart and squeeze the brachialis."],
+            ["Machine Lateral Raise", "4", "12-15", 60, "Use constant tension without swinging."],
+            ["Rear Delt Cable Fly", "3", "12-15", 60, "Open wide with soft elbows."],
+            ["Single-Arm Pressdown", "3", "12-15", 45, "Finish each rep with a full triceps flex."],
+          ],
+        },
+      ];
+
+      const state = {
+        activeDay: 0,
+        activeDetail: null,
+        timerTotal: 90,
+        timerRemaining: 90,
+        timerHandle: null,
+        completed: JSON.parse(localStorage.getItem("miguelgym-completed") || "{}"),
+        exerciseDetails: JSON.parse(localStorage.getItem("miguelgym-exercise-details") || "{}"),
+        personalNotes: JSON.parse(localStorage.getItem("miguelgym-personal-notes") || "{}"),
+        setLogs: JSON.parse(localStorage.getItem("miguelgym-set-logs") || "{}"),
+        sessions: JSON.parse(localStorage.getItem("miguelgym-sessions") || "{}"),
+      };
+
+      function weekStart() {
+        const today = new Date();
+        const base = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const daysSinceFriday = (base.getDay() - 5 + 7) % 7;
+        base.setDate(base.getDate() - daysSinceFriday);
+        return base;
+      }
+
+      function dateKey(date) {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      }
+
+      function currentWeekKey() {
+        return dateKey(weekStart());
+      }
+
+      function weekCompleted() {
+        const key = currentWeekKey();
+        if (!state.completed[key]) state.completed[key] = {};
+        return state.completed[key];
+      }
+
+      function exerciseId(dayIndex, exerciseIndex) {
+        return `d${dayIndex}-e${exerciseIndex}`;
+      }
+
+      function save() {
+        localStorage.setItem("miguelgym-completed", JSON.stringify(state.completed));
+        localStorage.setItem("miguelgym-exercise-details", JSON.stringify(state.exerciseDetails));
+        localStorage.setItem("miguelgym-personal-notes", JSON.stringify(state.personalNotes));
+        localStorage.setItem("miguelgym-set-logs", JSON.stringify(state.setLogs));
+        localStorage.setItem("miguelgym-sessions", JSON.stringify(state.sessions));
+      }
+
+      function baseDetail(name) {
+        const lower = name.toLowerCase();
+        const target = lower.includes("curl") ? "Biceps"
+          : lower.includes("pressdown") || lower.includes("dip") || lower.includes("triceps") || lower.includes("close-grip") ? "Triceps"
+          : lower.includes("raise") || lower.includes("delt") || lower.includes("shoulder") ? "Shoulders"
+          : lower.includes("row") || lower.includes("pulldown") || lower.includes("pull-up") || lower.includes("face pull") ? "Back"
+          : lower.includes("squat") || lower.includes("leg") || lower.includes("calf") || lower.includes("deadlift") ? "Legs"
+          : lower.includes("crunch") ? "Core"
+          : "Chest";
+        const equipment = lower.includes("cable") ? "Cable station"
+          : lower.includes("db") || lower.includes("dumbbell") ? "Dumbbells"
+          : lower.includes("machine") ? "Machine"
+          : lower.includes("barbell") || lower.includes("bench") || lower.includes("squat") ? "Barbell"
+          : "Gym station";
+        const substitutes = target === "Biceps" ? "Cable curl, Machine curl"
+          : target === "Triceps" ? "Skull crusher, Rope pressdown"
+          : target === "Shoulders" ? "Dumbbell lateral raise, Face pull"
+          : target === "Back" ? "Seated cable row, Neutral pulldown"
+          : target === "Legs" ? "Hack squat, Split squat"
+          : target === "Core" ? "Hanging knee raise, Decline sit-up"
+          : "Dumbbell press, Machine chest press";
+        return { target, equipment, substitutes };
+      }
+
+      function exerciseDetail(dayIndex, exerciseIndex) {
+        const id = exerciseId(dayIndex, exerciseIndex);
+        const [name, sets, reps, rest, note] = plan[dayIndex].exercises[exerciseIndex];
+        const base = baseDetail(name);
+        const videoUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${name} exercise proper form`)}`;
+        return {
+          id,
+          name,
+          sets,
+          reps,
+          rest,
+          note,
+          ...base,
+          videoUrl,
+          ...(state.exerciseDetails[id] || {}),
+          personalNote: state.personalNotes[id] || "",
+        };
+      }
+
+      function logSet(dayIndex, exerciseIndex) {
+        const key = currentWeekKey();
+        if (!state.setLogs[key]) state.setLogs[key] = [];
+        const detail = exerciseDetail(dayIndex, exerciseIndex);
+        state.setLogs[key].push({
+          exerciseId: detail.id,
+          workoutDay: dayIndex + 1,
+          setNumber: 1,
+          reps: Number.parseInt(detail.reps, 10) || 0,
+          weight: 0,
+          completedAt: Date.now(),
+        });
+      }
+
+      function dayStats(dayIndex) {
+        const day = plan[dayIndex];
+        const complete = weekCompleted();
+        const completed = day.exercises.filter((_, i) => complete[exerciseId(dayIndex, i)]).length;
+        return {
+          completed,
+          total: day.exercises.length,
+          progress: day.exercises.length ? completed / day.exercises.length : 0,
+        };
+      }
+
+      function weeklyStats() {
+        const dayTotals = plan.map((_, i) => dayStats(i));
+        const daysComplete = dayTotals.filter((d) => d.total > 0 && d.completed === d.total).length;
+        const exercisesComplete = dayTotals.reduce((sum, d) => sum + d.completed, 0);
+        const exerciseTotal = dayTotals.reduce((sum, d) => sum + d.total, 0);
+        const setsLogged = (state.setLogs[currentWeekKey()] || []).length;
+        return { daysComplete, exercisesComplete, exerciseTotal, setsLogged };
+      }
+
+      function renderHome() {
+        const list = document.getElementById("day-list");
+        list.innerHTML = "";
+        plan.forEach((day, index) => {
+          const stats = dayStats(index);
+          const button = document.createElement("button");
+          button.className = "card day-card";
+          button.type = "button";
+          button.onclick = () => openDay(index);
+          button.innerHTML = `
+            <div class="day-top">
+              <div>
+                <div class="day-num">Day ${day.dayNumber}</div>
+                <h2>${day.title}</h2>
+                <p class="muted">${day.subtitle}</p>
+              </div>
+              <div class="chev">&gt;</div>
+            </div>
+            <div class="focus">${day.focus.map((item) => `<span class="pill">${item}</span>`).join("")}</div>
+            <div class="progress"><span style="width: ${stats.progress * 100}%"></span></div>
+            <p class="muted" style="margin-top: 8px">${stats.completed}/${stats.total} complete</p>
+          `;
+          list.appendChild(button);
+        });
+
+        const weekly = weeklyStats();
+        document.getElementById("hero-days").textContent = `${weekly.daysComplete}/4`;
+        document.getElementById("hero-exercises").textContent = `${weekly.exercisesComplete} exercises`;
+        document.getElementById("week-label").textContent = weekRange();
+      }
+
+      function openDay(index) {
+        state.activeDay = index;
+        const day = plan[index];
+        const stats = dayStats(index);
+        document.getElementById("day-eyebrow").textContent = `Day ${day.dayNumber}`;
+        document.getElementById("day-title").textContent = day.title;
+        document.getElementById("day-hero-title").textContent = day.title;
+        document.getElementById("day-percent").textContent = `${Math.round(stats.progress * 100)}%`;
+        document.getElementById("day-progress").style.width = `${stats.progress * 100}%`;
+        document.getElementById("exercise-count").textContent = `${day.exercises.length} moves`;
+        renderExercises();
+        showScreen("day");
+      }
+
+      function renderExercises() {
+        const list = document.getElementById("exercise-list");
+        const dayIndex = state.activeDay;
+        const day = plan[dayIndex];
+        const complete = weekCompleted();
+        list.innerHTML = "";
+
+        day.exercises.forEach((exercise, index) => {
+          const detail = exerciseDetail(dayIndex, index);
+          const done = !!complete[exerciseId(dayIndex, index)];
+          const item = document.createElement("article");
+          item.className = `exercise card ${done ? "done" : ""}`;
+          item.innerHTML = `
+            <div class="exercise-main">
+              <button class="check ${done ? "done" : ""}" type="button" aria-label="Toggle ${detail.name}" onclick="toggleExercise(${dayIndex}, ${index})">OK</button>
+              <div>
+                <h2>${detail.name}</h2>
+                <div class="meta">
+                  <div><span>Sets</span><strong>${detail.sets}</strong></div>
+                  <div><span>Reps</span><strong>${detail.reps}</strong></div>
+                  <div><span>Rest</span><strong>${secondsToClock(Number(detail.rest))}</strong></div>
+                </div>
+                <p class="note">${detail.note}</p>
+                <p class="muted" style="margin-top: 8px">${detail.target} | ${detail.equipment}</p>
+                ${detail.personalNote ? `<p class="note" style="margin-top: 8px; color: var(--text)">My note: ${detail.personalNote}</p>` : ""}
+                <div class="exercise-actions">
+                  <button class="rest-button" type="button" onclick="setTimer(${Number(detail.rest)})">Start ${secondsToClock(Number(detail.rest))} rest</button>
+                  <button class="detail-button" type="button" onclick="openDetail(${dayIndex}, ${index})">Details</button>
+                </div>
+              </div>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+
+        const stats = dayStats(dayIndex);
+        if (stats.total > 0 && stats.completed === stats.total) {
+          const button = document.createElement("button");
+          button.className = "finish-button";
+          button.type = "button";
+          button.textContent = "Finish workout";
+          button.onclick = finishWorkout;
+          list.appendChild(button);
+        }
+      }
+
+      function toggleExercise(dayIndex, exerciseIndex) {
+        const complete = weekCompleted();
+        const id = exerciseId(dayIndex, exerciseIndex);
+        const next = !complete[id];
+        complete[id] = next;
+        if (next) logSet(dayIndex, exerciseIndex);
+        save();
+        if (state.activeDay === dayIndex) openDay(dayIndex);
+        renderHome();
+        renderWeekly();
+      }
+
+      function renderWeekly() {
+        const weekly = weeklyStats();
+        const percent = weekly.exerciseTotal ? Math.round((weekly.exercisesComplete / weekly.exerciseTotal) * 100) : 0;
+        document.getElementById("weekly-range").textContent = weekRange();
+        document.getElementById("weekly-percent").textContent = `${percent}%`;
+        document.getElementById("weekly-days").textContent = `${weekly.daysComplete}/4`;
+        document.getElementById("weekly-exercises").textContent = weekly.exercisesComplete;
+        document.getElementById("weekly-sets").textContent = weekly.setsLogged;
+
+        const list = document.getElementById("weekly-list");
+        list.innerHTML = "";
+        plan.forEach((day, index) => {
+          const stats = dayStats(index);
+          const done = stats.total > 0 && stats.completed === stats.total;
+          const row = document.createElement("div");
+          row.className = "week-row card";
+          row.innerHTML = `
+            <div>
+              <div class="day-num">Day ${day.dayNumber}</div>
+              <h2>${day.title}</h2>
+              <p class="muted">${stats.completed}/${stats.total} exercises</p>
+            </div>
+            <span class="${done ? "done-tag" : "open-tag"}">${done ? "Complete" : "Open"}</span>
+          `;
+          list.appendChild(row);
+        });
+      }
+
+      function weekRange() {
+        const start = weekStart();
+        const end = new Date(start);
+        end.setDate(end.getDate() + 6);
+        const options = { month: "short", day: "numeric" };
+        return `${start.toLocaleDateString(undefined, options)} - ${end.toLocaleDateString(undefined, options)}`;
+      }
+
+      function secondsToClock(seconds) {
+        const mins = String(Math.floor(seconds / 60));
+        const secs = String(Math.max(0, seconds % 60)).padStart(2, "0");
+        return `${mins}:${secs}`;
+      }
+
+      function renderTimer() {
+        document.getElementById("timer-display").textContent = secondsToClock(state.timerRemaining);
+        const degrees = state.timerTotal ? 360 * (1 - state.timerRemaining / state.timerTotal) : 0;
+        document.querySelector(".timer").style.setProperty("--timer-progress", `${degrees}deg`);
+        document.querySelector(".timer").classList.toggle("active", !!state.timerHandle);
+      }
+
+      function setTimer(seconds) {
+        state.timerTotal = seconds;
+        state.timerRemaining = seconds;
+        renderTimer();
+        startTimer();
+      }
+
+      function startTimer() {
+        pauseTimer();
+        state.timerHandle = window.setInterval(() => {
+          state.timerRemaining = Math.max(0, state.timerRemaining - 1);
+          renderTimer();
+          if (state.timerRemaining === 0) pauseTimer();
+        }, 1000);
+        renderTimer();
+      }
+
+      function pauseTimer() {
+        if (state.timerHandle) window.clearInterval(state.timerHandle);
+        state.timerHandle = null;
+        renderTimer();
+      }
+
+      function resetTimer() {
+        pauseTimer();
+        state.timerRemaining = state.timerTotal;
+        renderTimer();
+      }
+
+      function showScreen(name) {
+        document.querySelectorAll(".screen").forEach((screen) => screen.classList.remove("active"));
+        document.getElementById(`${name}-screen`).classList.add("active");
+        if (name === "weekly") renderWeekly();
+        if (name === "home") renderHome();
+      }
+
+      function openDetail(dayIndex, exerciseIndex) {
+        state.activeDetail = { dayIndex, exerciseIndex };
+        const detail = exerciseDetail(dayIndex, exerciseIndex);
+        document.getElementById("detail-title").textContent = detail.name;
+        document.getElementById("detail-technique").value = detail.note;
+        document.getElementById("detail-personal").value = detail.personalNote;
+        document.getElementById("detail-target").value = detail.target;
+        document.getElementById("detail-equipment").value = detail.equipment;
+        document.getElementById("detail-rest").value = detail.rest;
+        document.getElementById("detail-substitutes").value = detail.substitutes;
+        document.getElementById("detail-video").value = detail.videoUrl;
+        document.getElementById("detail-modal").classList.add("open");
+      }
+
+      function closeDetail() {
+        document.getElementById("detail-modal").classList.remove("open");
+        state.activeDetail = null;
+      }
+
+      function saveDetail() {
+        if (!state.activeDetail) return;
+        const { dayIndex, exerciseIndex } = state.activeDetail;
+        const id = exerciseId(dayIndex, exerciseIndex);
+        state.exerciseDetails[id] = {
+          note: document.getElementById("detail-technique").value,
+          target: document.getElementById("detail-target").value,
+          equipment: document.getElementById("detail-equipment").value,
+          rest: Number(document.getElementById("detail-rest").value) || exerciseDetail(dayIndex, exerciseIndex).rest,
+          substitutes: document.getElementById("detail-substitutes").value,
+          videoUrl: document.getElementById("detail-video").value,
+        };
+        state.personalNotes[id] = document.getElementById("detail-personal").value;
+        save();
+        closeDetail();
+        openDay(dayIndex);
+      }
+
+      function openDetailVideo() {
+        if (!state.activeDetail) return;
+        const { dayIndex, exerciseIndex } = state.activeDetail;
+        const videoUrl = document.getElementById("detail-video").value || exerciseDetail(dayIndex, exerciseIndex).videoUrl;
+        window.open(videoUrl, "_blank", "noopener,noreferrer");
+      }
+
+      function finishWorkout() {
+        const key = currentWeekKey();
+        if (!state.sessions[key]) state.sessions[key] = [];
+        const stats = dayStats(state.activeDay);
+        state.sessions[key].push({
+          workoutDay: state.activeDay + 1,
+          completedExercises: stats.completed,
+          totalExercises: stats.total,
+          finishedAt: Date.now(),
+        });
+        save();
+        document.getElementById("finish-copy").textContent = `${stats.completed} exercises and ${weeklyStats().setsLogged} set logs are stored for this week.`;
+        document.getElementById("finish-modal").classList.add("open");
+      }
+
+      function closeFinish() {
+        document.getElementById("finish-modal").classList.remove("open");
+      }
+
+      renderHome();
+      renderWeekly();
+      renderTimer();
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js");
+        });
+      }
+    </script>
+  </body>
+</html>
