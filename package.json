@@ -3,8 +3,20 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 4173",
     "build": "node scripts/build-pwa.mjs",
     "build:pwa": "node scripts/build-pwa.mjs",
-    "start": "node preview-server.mjs"
+    "start": "vite --host 127.0.0.1 --port 4173",
+    "convex:dev": "convex dev",
+    "convex:deploy": "convex deploy"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.1.0",
+    "convex": "^1.31.0",
+    "lucide-react": "^0.536.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "recharts": "^2.15.4",
+    "vite": "^7.2.7"
   }
 }

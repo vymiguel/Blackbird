@@ -6,8 +6,9 @@
     <title>Blackbird Preview</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="/config.js"></script>
     <script>
-      window.storage = {
+      const localStorageAdapter = {
         async get(key) {
           const value = localStorage.getItem(key);
           return value == null ? null : { value };
@@ -19,7 +20,62 @@
         async remove(key) {
           localStorage.removeItem(key);
         },
+        subscribe(key, _shared, callback) {
+          const handler = (event) => {
+            if (event.key === key) callback(event.newValue);
+          };
+          window.addEventListener("storage", handler);
+          return () => window.removeEventListener("storage", handler);
+        },
       };
+      window.storage = localStorageAdapter;
+    </script>
+    <script type="module">
+      const convexUrl = window.BLACKBIRD_CONVEX_URL;
+
+      if (convexUrl) {
+        try {
+          const [{ ConvexClient }, { anyApi }] = await Promise.all([
+            import("https://esm.sh/convex@1.17.4/browser"),
+            import("https://esm.sh/convex@1.17.4/server"),
+          ]);
+          const client = new ConvexClient(convexUrl);
+          const cacheKey = (key, shared) => `${shared ? "shared" : "private"}:${key}`;
+          const cache = new Map();
+
+          window.storage = {
+            async get(key, shared = true) {
+              const result = await client.query(anyApi.appState.get, { key, shared });
+              if (result?.value != null) cache.set(cacheKey(key, shared), result.value);
+              return result;
+            },
+            async set(key, value, shared = true) {
+              await client.mutation(anyApi.appState.set, { key, value, shared, updatedBy: "browser" });
+              cache.set(cacheKey(key, shared), value);
+              return { value };
+            },
+            async remove(key, shared = true) {
+              await client.mutation(anyApi.appState.remove, { key, shared, updatedBy: "browser" });
+              cache.delete(cacheKey(key, shared));
+            },
+            subscribe(key, shared = true, callback) {
+              return client.onUpdate(
+                anyApi.appState.get,
+                { key, shared },
+                (result) => {
+                  const value = result?.value ?? null;
+                  if (value == null) cache.delete(cacheKey(key, shared));
+                  else cache.set(cacheKey(key, shared), value);
+                  callback(value);
+                },
+                (error) => console.error("Convex subscription failed", error)
+              );
+            },
+          };
+        } catch (error) {
+          console.warn("Convex storage unavailable; using localStorage fallback.", error);
+        }
+      }
     </script>
   </head>
   <body>

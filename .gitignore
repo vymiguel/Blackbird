@@ -6,13 +6,12 @@ out/
 App.tsx
 app.json
 blackbird-standalone.jsx
-convex/
-src/
+convex/workouts.ts
+src/remotion/
 tsconfig.json
 web-preview.html
 .env.local
 .env
-.env.example
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

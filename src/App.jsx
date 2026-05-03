@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext } from 'https://esm.sh/react@18.3.1';
-import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client';
+import React, { useState, useEffect, useMemo, useRef, createContext, useContext } from 'react';
+import { ConvexProvider, ConvexReactClient, useMutation, useQuery } from 'convex/react';
+import { api } from '../convex/_generated/api';
 import {
   Truck, Clock, Users, Fuel, LogOut, Play, Square, Plus, Edit3, Trash2,
   UserCog,
@@ -7,11 +8,11 @@ import {
   FileText, Settings, Eye, EyeOff, AlertCircle, Check, X, User, Home,
   History, Droplet, Menu, ArrowRight, MapPin, Zap, Search, Download,
   CircleUser, Radio
-} from 'https://esm.sh/lucide-react@0.536.0?deps=react@18.3.1';
+} from 'lucide-react';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area
-} from 'https://esm.sh/recharts@2.15.4?deps=react@18.3.1,react-dom@18.3.1';
+} from 'recharts';
 
 /* ============================================================
    FONTS + GLOBAL STYLES
@@ -137,14 +138,78 @@ const dayKey = (d) => {
   return `${x.getFullYear()}-${(x.getMonth() + 1).toString().padStart(2, '0')}-${x.getDate().toString().padStart(2, '0')}`;
 };
 
+const CONVEX_URL = import.meta.env.VITE_CONVEX_URL;
+const convexClient = CONVEX_URL ? new ConvexReactClient(CONVEX_URL) : null;
+const ConvexStateCtx = createContext(null);
+
+if (typeof window !== 'undefined' && !window.storage) {
+  window.storage = {
+    async get(key) {
+      const value = localStorage.getItem(key);
+      return value == null ? null : { value };
+    },
+    async set(key, value) {
+      localStorage.setItem(key, value);
+      return { value };
+    },
+    async remove(key) {
+      localStorage.removeItem(key);
+    },
+  };
+}
+
+function LocalStateProvider({ children }) {
+  return <ConvexStateCtx.Provider value={null}>{children}</ConvexStateCtx.Provider>;
+}
+
+function ConvexStateProvider({ children }) {
+  const docs = useQuery(api.blackbird.getAllState, {});
+  const setRemoteState = useMutation(api.blackbird.setState);
+  const values = useMemo(() => {
+    const map = {};
+    (docs || []).forEach(doc => { map[doc.key] = doc.value; });
+    return map;
+  }, [docs]);
+
+  const value = useMemo(() => ({
+    loaded: docs !== undefined,
+    values,
+    setValue: (key, nextValue, shared) => {
+      if (!shared) {
+        window.storage?.set?.(key, nextValue, false);
+        return;
+      }
+      setRemoteState({ key, value: nextValue, updatedAt: Date.now() });
+    },
+  }), [docs, values, setRemoteState]);
+
+  return <ConvexStateCtx.Provider value={value}>{children}</ConvexStateCtx.Provider>;
+}
+
 /* ============================================================
-   PERSISTED STATE HOOK (uses window.storage; no localStorage)
+   PERSISTED STATE HOOK (Convex for shared state, localStorage for sessions)
    ============================================================ */
 function usePersistedState(key, initialValue, shared = true) {
+  const convexState = useContext(ConvexStateCtx);
   const [state, setState] = useState(initialValue);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    if (shared && convexState) {
+      if (!convexState.loaded) {
+        setLoaded(false);
+        return;
+      }
+      const raw = convexState.values[key];
+      if (raw) {
+        try { setState(JSON.parse(raw)); } catch {}
+      } else {
+        setState(initialValue);
+      }
+      setLoaded(true);
+      return;
+    }
+
     let cancelled = false;
     (async () => {
       try {
@@ -155,24 +220,20 @@ function usePersistedState(key, initialValue, shared = true) {
       } catch {}
       if (!cancelled) setLoaded(true);
     })();
-    const unsubscribe = window.storage.subscribe?.(key, shared, (value) => {
-      if (cancelled) return;
-      if (value == null) {
-        setState(initialValue);
-        return;
-      }
-      try { setState(JSON.parse(value)); } catch {}
-    });
-    return () => {
-      cancelled = true;
-      try { unsubscribe?.(); } catch {}
-    };
-  }, [key]);
+    return () => { cancelled = true; };
+  }, [key, shared, convexState?.loaded, convexState?.values?.[key]]);
 
   const setPersistedState = (newValue) => {
     setState(prev => {
       const next = typeof newValue === 'function' ? newValue(prev) : newValue;
-      try { window.storage.set(key, JSON.stringify(next), shared); } catch {}
+      try {
+        const serialized = JSON.stringify(next);
+        if (shared && convexState) {
+          convexState.setValue(key, serialized, shared);
+        } else {
+          window.storage.set(key, serialized, shared);
+        }
+      } catch {}
       return next;
     });
   };
@@ -361,6 +422,7 @@ function DataProvider({ children }) {
   useEffect(() => {
     if (eL && sL && fL && !seeded) {
       const { shifts: ss, fuel: ff } = buildSeed();
+      setEmployees(SEED_EMPLOYEES);
       setShifts(ss);
       setFuel(ff);
       setSeeded(true);
@@ -2887,12 +2949,22 @@ function App() {
 }
 
 function Root() {
-  return (
+  const app = (
     <DataProvider>
       <App />
     </DataProvider>
   );
+
+  if (!convexClient) {
+    return <LocalStateProvider>{app}</LocalStateProvider>;
+  }
+
+  return (
+    <ConvexProvider client={convexClient}>
+      <ConvexStateProvider>{app}</ConvexStateProvider>
+    </ConvexProvider>
+  );
 }
 
 
-createRoot(document.getElementById('root')).render(<Root />);
+export default Root;

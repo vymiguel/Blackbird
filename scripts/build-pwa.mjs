@@ -1,16 +1,21 @@
-import { copyFileSync, mkdirSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 
 const root = process.cwd();
+const viteBin = join(root, "node_modules", "vite", "bin", "vite.js");
+const result = spawnSync(process.execPath, [viteBin, "build"], { stdio: "inherit" });
+
+if (result.status !== 0) {
+  process.exit(result.status ?? 1);
+}
+
 const dist = join(root, "dist");
+for (const file of ["manifest.webmanifest", "app-icon.svg", "sw.js"]) {
+  const source = join(root, file);
+  if (existsSync(source)) {
+    copyFileSync(source, join(dist, file));
+  }
+}
 
-rmSync(dist, { recursive: true, force: true });
-mkdirSync(dist, { recursive: true });
-
-copyFileSync(join(root, "blackbird-preview.html"), join(dist, "index.html"));
-copyFileSync(join(root, "blackbird-module.jsx"), join(dist, "blackbird-module.jsx"));
-copyFileSync(join(root, "manifest.webmanifest"), join(dist, "manifest.webmanifest"));
-copyFileSync(join(root, "app-icon.svg"), join(dist, "app-icon.svg"));
-copyFileSync(join(root, "sw.js"), join(dist, "sw.js"));
-
-console.log("Blackbird preview built in dist/");
+console.log("Blackbird app built in dist/");
